@@ -100,7 +100,29 @@ ggplot() +
 
 # 5) Explain your choice for layers in your model.
 
-# Need to do this
+# # I plan to use Bioclimatic variables that are relevant to Chaetodipus californicus. C. californicus seems to 
+# be sensitive to both elevation and to be strongly associated with chapparral. Chaparral is found in regions with hot, 
+# dry summers, and mild, wet winters. I want the bioclim layers in my model to reflect this plant community. Additionally,
+# I may be including layers that as of now are correlated, but I would remove correlated variables using model selection techniques
+# before running my final ENM. 
+
+#' I intend to include the followign 8 variables:
+#' 
+#' 1 & 2) BIO1 and BIO12 - The annual mean temperature and Annual precipitation, as these variables may broadly explain the niche of 
+#' C. californicus.
+#' 
+#' 3 & 4) BIO4 and BIO 15 - Temperature Seasonality & Precipitation Seasonality - These variables may be useful in describing the 
+#' variance in temperature and seasonality that are characteristic of the chaparral ecosystem. 
+#' 
+#' 5 & 6) BIO5 and BIO5 - Max Temperature of Warmest Month and Min Temperature of Coldest month - C. californicus can initiate torpor
+#' if necessary, but avoids high elevation (>2400m), so Min temperature of Coldest month could help determine the species niche, 
+#' while max temperature of warmest months could be found in true dessert areas outside of the chaparral ecosystem.
+#' 
+#' 7 & 8) BIO16 and BIO17, Precipitation of wettest quarter and precipitation of driest quarter. Using quarter would get at the 
+#' seasonality we would expect with wet winters and dry summers. Non-chapparal ecosystems could experience different precipitation
+#' patterns. 
+#' 
+#' Again, I would check for correlated variables before choosing what final variables to include in the model. 
 
 # 6) Clip your layers to the accessible area you choose in #3.
 

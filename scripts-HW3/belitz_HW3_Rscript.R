@@ -84,11 +84,38 @@ ggplot() +
 # 3) Decide on the accessible area of the species, using whatever criteria you think make sense based on the species biology. 
 # Write your explanation for accessible area.
 
+# crop buffer to terrestrial land
+
+buff_crop <- st_intersection(x = rm_sf_buffer, y = na)
+
+ggplot() + 
+  geom_sf(na, mapping = aes()) +
+  geom_sf(occ_df_inseterct, mapping = aes()) +
+  geom_sf(buff_crop, mapping = aes(), color = "blue", alpha = 0.2) 
 
 
 # 4) Download relevant layers for your model - We'd suggest a bioclimatic model for this case so likely worldclim layers
+
+# Downloaded Worldclim layers
+
 # 5) Explain your choice for layers in your model.
+
+# Need to do this
+
 # 6) Clip your layers to the accessible area you choose in #3.
+
+bio1 <- raster("WorldClim/wc2.0_bio_10m_01.tif")
+
+buff_crop_sp <- as_Spatial(buff_crop)
+
+bio1_crop <- crop(x = bio1, buff_crop_sp)
+
+plot(bio1_crop)
+
+bio1_mask <- mask(bio1_crop, mask = buff_crop_sp)
+
+plot(bio1_mask)
+
 # 
 # You can change up this order of operations etc - the order is just to help give you an idea of what you need to do.
 

@@ -65,11 +65,11 @@ ggplot() +
 
 # keep points contained by range map buffer
 
-occ_df_inseterct <- st_intersection(occ_sf, rm_sf_buffer)
+occ_df_intersect <- st_intersection(occ_sf, rm_sf_buffer)
 
 ggplot() + 
   geom_sf(na, mapping = aes()) +
-  geom_sf(occ_df_inseterct, mapping = aes()) +
+  geom_sf(occ_df_intersect, mapping = aes()) +
   geom_sf(rm_sf_buffer, mapping = aes(), color = "blue", alpha = 0.2) 
 
 # remove points in the ocean
@@ -83,6 +83,9 @@ ggplot() +
 
 # 3) Decide on the accessible area of the species, using whatever criteria you think make sense based on the species biology. 
 # Write your explanation for accessible area.
+
+occ_df_inseterct
+
 
 # crop buffer to terrestrial land
 
@@ -125,6 +128,8 @@ ggplot() +
 #' Again, I would check for correlated variables before choosing what final variables to include in the model. 
 
 # 6) Clip your layers to the accessible area you choose in #3.
+
+# I'm going to clip all layers, 
 
 bio1 <- raster("WorldClim/wc2.0_bio_10m_01.tif")
 

@@ -74,27 +74,53 @@ ggplot() +
 
 # remove points in the ocean
 
-occ_df_inseterct <- st_intersection(occ_df_inseterct, na)
+occ_df_intersect <- st_intersection(occ_df_intersect, na)
 
 ggplot() + 
   geom_sf(na, mapping = aes()) +
-  geom_sf(occ_df_inseterct, mapping = aes()) +
+  geom_sf(occ_df_intersect, mapping = aes()) +
   geom_sf(rm_sf_buffer, mapping = aes(), color = "blue", alpha = 0.2) 
 
 # 3) Decide on the accessible area of the species, using whatever criteria you think make sense based on the species biology. 
 # Write your explanation for accessible area.
 
-occ_df_inseterct
+# first I'm going to get Lat and Long coordinates out of the sf geometry
+occ_df_intersect <- occ_df_intersect %>% 
+  mutate(decimalLongitude = st_coordinates(occ_df_intersect )[,1]) %>% 
+  mutate(decimalLatitude = st_coordinates(occ_df_intersect )[,2])
 
+# create convex hull
+occ_convex_hull <- chull(occ_df_intersect$decimalLongitude, occ_df_intersect$decimalLatitude) 
+
+## generate the end points of polygon. 
+CoordsPoly = occ_df_intersect[c(occ_convex_hull, occ_convex_hull[1]), ] %>% 
+  as.data.frame() %>% 
+  dplyr::select(decimalLongitude, decimalLatitude)# closed polygon
+## convert this polygon coordinate matix to SpatialPolygon, so that buffering cound be done. 
+SpPoly = SpatialPolygons(list(Polygons(list(Polygon(CoordsPoly)), ID=1)))
+## let's add a buffer to the convex hull. Because the mouse appears to have limited
+## dispersal ability, I'm going to keep the accessible area relatively small ~10 km 
+Buff_SpPoly = buffer(SpPoly, width = 0.1, dissolve = F)
+
+## See whether the convex hull is generated correctly or not
+Buff_SpPoly_sf <- st_as_sf(Buff_SpPoly)
+st_crs(Buff_SpPoly_sf) <- "+proj=longlat +datum=WGS84 +no_defs"
+
+## See whether the convex hull is generated correctly or not
+ggplot() + 
+  geom_sf(na, mapping = aes()) +
+  geom_sf(occ_df_intersect, mapping = aes()) +
+  geom_sf(Buff_SpPoly_sf, mapping = aes(), color = "blue", alpha = 0.2) +
+  coord_sf(xlim = c(-125, -110), ylim = c(29, 40))
 
 # crop buffer to terrestrial land
-
-buff_crop <- st_intersection(x = rm_sf_buffer, y = na)
+buff_crop <- st_intersection(x = Buff_SpPoly_sf, y = na)
 
 ggplot() + 
   geom_sf(na, mapping = aes()) +
-  geom_sf(occ_df_inseterct, mapping = aes()) +
-  geom_sf(buff_crop, mapping = aes(), color = "blue", alpha = 0.2) 
+  geom_sf(occ_df_intersect, mapping = aes()) +
+  geom_sf(buff_crop, mapping = aes(), color = "blue", alpha = 0.2) +
+  coord_sf(xlim = c(-125, -110), ylim = c(29, 40))
 
 
 # 4) Download relevant layers for your model - We'd suggest a bioclimatic model for this case so likely worldclim layers
@@ -117,7 +143,7 @@ ggplot() +
 #' 3 & 4) BIO4 and BIO 15 - Temperature Seasonality & Precipitation Seasonality - These variables may be useful in describing the 
 #' variance in temperature and seasonality that are characteristic of the chaparral ecosystem. 
 #' 
-#' 5 & 6) BIO5 and BIO5 - Max Temperature of Warmest Month and Min Temperature of Coldest month - C. californicus can initiate torpor
+#' 5 & 6) BIO5 and BIO6 - Max Temperature of Warmest Month and Min Temperature of Coldest month - C. californicus can initiate torpor
 #' if necessary, but avoids high elevation (>2400m), so Min temperature of Coldest month could help determine the species niche, 
 #' while max temperature of warmest months could be found in true dessert areas outside of the chaparral ecosystem.
 #' 
@@ -129,20 +155,32 @@ ggplot() +
 
 # 6) Clip your layers to the accessible area you choose in #3.
 
-# I'm going to clip all layers, 
+# I'm going to clip all layers
 
-bio1 <- raster("WorldClim/wc2.0_bio_10m_01.tif")
+# read in list of files
+filelist <- list.files("Layers/", full.names = TRUE)
 
-buff_crop_sp <- as_Spatial(buff_crop)
-
-bio1_crop <- crop(x = bio1, buff_crop_sp)
-
-plot(bio1_crop)
-
-bio1_mask <- mask(bio1_crop, mask = buff_crop_sp)
-
-plot(bio1_mask)
-
-# 
-# You can change up this order of operations etc - the order is just to help give you an idea of what you need to do.
+for(i in 1:length(filelist)){
+  # read in raster
+  r <- raster(filelist[i])
+  
+  # change buffer from sf object to spatial
+  buff_crop_sp <- as_Spatial(buff_crop)
+  
+  #crop file to extent of the buffer
+  r_crop <- crop(r, buff_crop_sp)
+  
+  # mask the cropped file 
+  r_mask <- mask(r_crop, mask = buff_crop_sp)
+  
+  # save files
+  r_names <- names(r)
+  FileName = paste("Clipped_Layers", "/", r_names, ".asc", sep = "")
+  
+  writeRaster(r_mask, FileName, "GTiff")
+  
+  #plot and print to check loop
+  plot(r_mask)
+  print(i)
+}
 

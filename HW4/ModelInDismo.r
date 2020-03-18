@@ -1,6 +1,5 @@
 ## SEt the folder to the species folder
-setwd(choose.dir())
-
+setwd(dir = "c:/Users/Mike/Documents/UF2/SDM/SDM-Homework/HW4/")
 
 library(raster)
 library(dismo)
@@ -8,7 +7,7 @@ library(maxnet)
 
 
 ## Read the occurrence table
-occtbl = read.csv("./Occurrences/cleaned_Chaetodipus_baileyi.csv")
+occtbl = read.csv("cleaned_Chaetodipus_baileyi.csv")
 dim(occtbl)
 
 ## Generate random number to separate training and testing occurrence data
@@ -21,11 +20,11 @@ test_occr = occtbl[i, c("scientificName", "decimalLongitude", "decimalLatitude")
 train_occr = occtbl[-i, c("scientificName", "decimalLongitude", "decimalLatitude")]
 
 
-write.csv(test_occr, "./Occurrences/test_C_baileyi.csv", row.names =FALSE)
-write.csv(train_occr, "./Occurrences/train_C_baileyi.csv", row.names =FALSE)
+write.csv(test_occr, "Ocurrences/test_C_baileyi.csv", row.names =FALSE)
+write.csv(train_occr, "Ocurrences/train_C_baileyi.csv", row.names =FALSE)
 
 ## Get the list of .asc files which are used as predictors
-files <- list.files("./CalibrationFiles/", pattern='asc', full.names=TRUE )
+files <- list.files("CalibrationFiles/", pattern='asc', full.names=TRUE )
 
 ## create a stack of predictors
 predictors <- stack(files)
@@ -64,9 +63,8 @@ modeltune <- maxnet(pres, preds1,  regmult=3, f = maxnet.formula(pres, preds1, c
 plot(modeltune , type="cloglog") #can also do "link" or "logistic"
 
 # Map it:
-predict(predictors, modeltune, clamp=T, type="cloglog")
-
-
+maxnet_map <- predict(predictors, modeltune, clamp=T, type="cloglog")
+plot(maxnet_map)
 
 
 ### Models in Dismo
@@ -80,7 +78,7 @@ mod_lin <- maxent(x=predictors, p=coordinates(occur), args=arguments)
 mod_lin
 
 CaliPred1 = predict(mod_lin,predictors)
-plot(CaliPred2)
+plot(CaliPred1)
 
 
 ## only linear and regularization is 0.5 

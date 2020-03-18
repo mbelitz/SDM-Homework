@@ -89,7 +89,7 @@ ggplot() +
 
 ## 3) Decide on the accessible area of the species, using whatever criteria you think make sense based on the species biology. Write your explanation for accessible area.
 
-Due to the small home range size of up to 56.74 ha and maximum distance moved by an individual moved during a 24-h period of 850-m suggested by trapping studies (Spiegel et al., 1995), I expect *C. californicus* to have limited mobility and therefore have restricted accessible area. I include some area still accessible to the pocket mouse, without including too big of an area outside of the know occurrences of the species. I decided on the accessible area by creating a convex hull around the occurrence points and adding a buffer of approximately 10-km to the convex hull. This buffer was then cropped to include exclude the ocean areas. This relatively small area still includes lots of climate heterogeneity as it includes different ecoregions and elevational ranges.
+Due to the small home range size of up to 56.74 ha and maximum distance moved by an individual moved during a 24-h period of 850-m suggested by trapping studies (Spiegel et al., 1995), I expect *C. californicus* to have limited mobility and therefore have restricted accessible area. I include some area still accessible to the pocket mouse outside of the known occurrences, without including too big of an area outside of the know occurrences of the species. I decided on the accessible area by creating a convex hull around the occurrence points and adding a buffer of approximately 10-km to the convex hull. This buffer was then cropped to include exclude the ocean areas. This relatively small area still includes lots of climate heterogeneity as it includes different ecoregions and elevational ranges.
 
 Reference: Spiegel, L., M. Small, J. Tom, T. Dao. 1995. An occurrance of long range movement in the California pocketmouse (*Chaetodipus californicus*). The Southwestern Naturalist, 40: 225-226.
 
@@ -147,13 +147,13 @@ I plan to use Bioclimatic variables that are relevant to *Chaetodipus californic
 I intend to include the followign 8 variables:
 
 ### 1 & 2) BIO1 and BIO12 - Annual mean temperature and annual precipitation layers
-These variables may broadly explain the niche of *C. californicus*.
+These variables may broadly explain part of the multi-dimensional niche of *C. californicus*.
 
 ### 3 & 4) BIO4 and BIO 15 - Temperature Seasonality & Precipitation Seasonality layers
-These variables may be useful in describing the variance in temperature and precipitation that are representitive of the seasonality characteristic of chaparral ecosystems. 
+These variables may be useful in describing the variance in temperature and precipitation that are representitive of the seasonality that is characteristic of chaparral ecosystems. 
 
 ### 5 & 6) BIO5 and BIO6 - Max Temperature of Warmest Month and Min Temperature of Coldest month 
-*C. californicus* can initiate torpor if necessary, but avoids high elevation (>2400m), so Min temperature of Coldest month could help determine the species niche, while max temperature of warmest months could help delineate true dessert areas outside of the chaparral ecosystem.
+*C. californicus* can initiate torpor if necessary, but avoids high elevation (>2400m), so min temperature of coldest month could help determine the species niche, while max temperature of warmest months could help delineate true dessert areas outside of the chaparral ecosystem.
 
 ### 7 & 8) BIO16 and BIO17 Precipitation of wettest quarter and precipitation of driest quarter
 Using quarterly precipitation values would get at the seasonality we would expect with wet winters and dry summers. Non-chapparal ecosystems could experience different precipitation patterns than chapparal ecosystems. 

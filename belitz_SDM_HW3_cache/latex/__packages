@@ -1,0 +1,14 @@
+base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
+rgbif
+dplyr
+rnaturalearth
+sp
+raster
+sf
+ggplot2

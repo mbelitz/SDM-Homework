@@ -33,7 +33,12 @@ mouse_occ_df <- mouse_occ$data
 
 mouse_occ_df_clean <- mouse_occ_df %>% 
   filter(!is.na(decimalLatitude)) %>% 
-  filter(!is.na(decimalLongitude))
+  filter(!is.na(decimalLongitude)) 
+
+# remove occurrence points with large coordinate uncertainty (5 km)
+mouse_occ_df_clean2 <- mouse_occ_df_clean %>% 
+  filter(coordinateUncertaintyInMeters < 5000)
+
 
 # Visualize where the points fall on a map
 na <- rnaturalearth::ne_countries(continent = "North America", returnclass = "sf")
@@ -96,17 +101,19 @@ occ_convex_hull <- chull(occ_df_intersect$decimalLongitude, occ_df_intersect$dec
 CoordsPoly = occ_df_intersect[c(occ_convex_hull, occ_convex_hull[1]), ] %>% 
   as.data.frame() %>% 
   dplyr::select(decimalLongitude, decimalLatitude)# closed polygon
+
 ## convert this polygon coordinate matix to SpatialPolygon, so that buffering cound be done. 
 SpPoly = SpatialPolygons(list(Polygons(list(Polygon(CoordsPoly)), ID=1)))
+
 ## let's add a buffer to the convex hull. Because the mouse appears to have limited
 ## dispersal ability, I'm going to keep the accessible area relatively small ~10 km 
 Buff_SpPoly = buffer(SpPoly, width = 0.1, dissolve = F)
 
 ## See whether the convex hull is generated correctly or not
+## Convert back to sf
 Buff_SpPoly_sf <- st_as_sf(Buff_SpPoly)
 st_crs(Buff_SpPoly_sf) <- "+proj=longlat +datum=WGS84 +no_defs"
 
-## See whether the convex hull is generated correctly or not
 ggplot() + 
   geom_sf(na, mapping = aes()) +
   geom_sf(occ_df_intersect, mapping = aes()) +
@@ -175,9 +182,9 @@ for(i in 1:length(filelist)){
   
   # save files
   r_names <- names(r)
-  FileName = paste("Clipped_Layers", "/", r_names, ".asc", sep = "")
+  FileName = paste("Clipped_Layers", "/", r_names, ".tiff", sep = "")
   
-  writeRaster(r_mask, FileName, "GTiff")
+  writeRaster(r_mask, FileName, "GTiff", overwrite = TRUE)
   
   #plot and print to check loop
   plot(r_mask)

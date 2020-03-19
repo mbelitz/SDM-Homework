@@ -34,7 +34,7 @@ mouse_occ_df <- mouse_occ$data
 
 ## 2) Clean the records using tools in R. Your approach can be your own but show your code.
 
-Below is the code I used to clean the data. I removed points without latitude and longitude data, and I also removed data with large coordinate uncertainty, given the small home range of this species. I then removed all points that fell 1.5 latitudinal degrees outside of the range map provided by the IUCN. The large buffer (~160 km) around the range map will include for species that are found in areas outside the expert range map, while not including related species that are misidentified outside of the range. 
+Below is the code I used to clean the data. I removed points without latitude and longitude data, and I also removed data with large coordinate uncertainty, given the small home range of this species. I then removed all points that fell 1.5 latitudinal degrees outside of the range map provided by the IUCN. The large buffer (~160 km) around the range map will include for species that are found in areas outside the expert range map, while not including related species that are misidentified outside of the range. My cleaned records are found in the simple feature (sf) named 'occurrence_df_intersect'.
 
 ```{r clean_records, warning=FALSE}
 # remove occurrence points with NA values
@@ -144,13 +144,13 @@ I downloaded all 19 bioclimatic layers from worldclim.
 
 I plan to use Bioclimatic variables that are relevant to *Chaetodipus californicus*. *C. californicus* seems to  be sensitive to both elevation and to be strongly associated with chapparral. Chaparral is found in regions with hot, dry summers, and mild, wet winters. I want the bioclim layers in my model to reflect this plant community. Additionally, I may be including layers that as of now are correlated, but I would remove correlated variables using model selection techniques before running my final ENM. 
 
-I intend to include the followign 8 variables:
+I intend to include the following 8 variables:
 
 ### 1 & 2) BIO1 and BIO12 - Annual mean temperature and annual precipitation layers
 These variables may broadly explain part of the multi-dimensional niche of *C. californicus*.
 
 ### 3 & 4) BIO4 and BIO 15 - Temperature Seasonality & Precipitation Seasonality layers
-These variables may be useful in describing the variance in temperature and precipitation that are representitive of the seasonality that is characteristic of chaparral ecosystems. 
+These variables may be useful in describing the variance in temperature and precipitation that is characteristic of the seasonality of chaparral ecosystems. 
 
 ### 5 & 6) BIO5 and BIO6 - Max Temperature of Warmest Month and Min Temperature of Coldest month 
 *C. californicus* can initiate torpor if necessary, but avoids high elevation (>2400m), so min temperature of coldest month could help determine the species niche, while max temperature of warmest months could help delineate true dessert areas outside of the chaparral ecosystem.
@@ -160,7 +160,7 @@ Using quarterly precipitation values would get at the seasonality we would expec
 
 ## 6) Clip your layers to the accessible area you choose in #3.
 
-Clip all 8 layers described above and found in the Layers directory. 
+I put the eight layers described above into a single directory. I used a for loop to clip all 8 layers found in the 'Layers' directory and save them into a 'Clipped_Layers' directory. 
 
 ```{r, clip_layers}
 # read in list of files
